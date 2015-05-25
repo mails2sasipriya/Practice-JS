@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Image Selector</title>
+    <!--
+        filereader + promises (can upload multiple img files)
+        should be able to select only image files, img.png, img.jpg. If any other files
+        they should not show up
+     -->
+    <style>
+        img {
+            height : 200px;
+            display: inline-block;
+            margin : 0.5em;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('input').addEventListener('change', function () {
+                var files = Array.prototype.slice.call(this.files);
+
+                var valid_mimes = ['image/jpeg', 'image/png'];
+                // filters an array based on a filtering func, the new array contains only those elements for
+                // which the filtering func returns true
+                var image_files = files.filter(function (file) {
+                    // checking to see if img type (jpeg = 0, png = 1) of the file exists in the valid mime list
+                    return valid_mimes.indexOf(file.type) !== -1;
+                });
+
+                console.log(image_files);
+
+                var container = document.querySelector('#container');
+                container.innerHTML = '';
+
+                var promises = image_files.map(getImageReadPromise);
+
+                Promise.all(promises).then(function (data) {
+
+                            console.log('data');
+                            console.log(data);
+
+                            data.forEach(function(src){
+                                console.log('src : ' + src);
+                                var image = document.createElement('img');
+                                image.src = src;
+                                container.appendChild(image);
+                            }) ;
+                        },
+                        function() {
+                            //  reject function
+                            console.log('Error while reading files...');
+                        });
+                console.log("All done");
+            });
+
+
+        });
+
+
+        function getImageReadPromise(file) {
+
+            return new Promise(function(resolve, reject) {
+                var filereader = new FileReader();
+
+                filereader.addEventListener('loadend', function(){
+                    resolve(filereader.result);
+                });
+                filereader.addEventListener('error', function(){
+                    reject();
+                });
+                filereader.readAsDataURL(file);
+            });
+
+        }
+
+
+
+    </script>
+</head>
+<body>
+<input type="file" multiple/>
+<div id="container"></div>
+</body>
+</html>

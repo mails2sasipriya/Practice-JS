@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+
+        function createPromise(i) {
+            return new Promise(function (resolve, reject) {
+                var randomInterval = ~~(Math.random() * 1000);
+                setTimeout(function () {
+                    console.log(i, randomInterval);
+                    resolve(randomInterval);
+                }, randomInterval);
+            });
+        }
+
+        var promises = [];
+
+        for (var i = 0; i < 10; i++) {
+            promises.push(createPromise(i));
+        }
+
+        var final_promise = Promise.all(promises);
+
+        setTimeout(function () {
+            final_promise.then(function (data) {
+                console.log(data);
+            });
+
+            final_promise.then(function (data) {
+                console.log(data);
+            });
+        }, 3000);
+
+        final_promise.then(function (data) {
+            console.log('printing value immediately: ', data);
+        });
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

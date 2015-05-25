@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="async.js"></script>
+    <script>
+
+        function randomPrint(i, prev_total, callback) {
+            var randomInterval = ~~(Math.random() * 1000);
+            setTimeout(function () {
+                console.log(i, randomInterval, 'running total: ', prev_total + randomInterval);
+                callback(null, prev_total + randomInterval);
+            }, randomInterval);
+        }
+
+        var tasks = [];
+        tasks.push(randomPrint.bind(null, 0, 0));
+        for (var i = 1; i < 10; i++) {
+            tasks.push(randomPrint.bind(null, i));
+        }
+
+        async.waterfall(tasks, function (err, result) {
+            if (err) console.log(err);
+            else console.log('Final number: ', result);
+        });
+
+
+        // waterfall --> the output of the first function serves as the input to the second function
+
+        // callback(err, param1, param2 ... )
+
+        // fn (param1, param2 ... , callback) {}
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

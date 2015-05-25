@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+
+        function createImagePromise(url) {
+            return new Promise(function (resolve, reject) {
+                var img = document.createElement('img');
+                img.addEventListener('load', function () {
+                    resolve(img);
+                });
+                img.addEventListener('error', function () {
+                    reject(img);
+                });
+                img.src = url;
+            });
+        }
+
+        var urls = [
+            'http://cdn.css-tricks.com/wp-content/uploads/2014/05/flex-direction1.svg',
+            'http://cdn.css-tricks.com/wp-content/uploads/2014/05/flex-wrap.svg',
+            'http://cdn.css-tricks.com/wp-content/uploads/2013/04/justify-content.svg',
+            'http://cdn.css-tricks.com/wp-content/uploads/2014/05/align-items.svg'
+        ];
+
+        var promises = urls.map(createImagePromise);
+
+        Promise.all(promises).then(function (data) {
+            console.log(data);
+            data.forEach(function (img) {
+                document.body.appendChild(img);
+            });
+        });
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app="myapp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="bower_components/angular/angular.js"></script>
+    <script>
+        //TO handle async operations. Its assurance that the async operation will run. The return would be a promise
+       // object. Then method takes two methods resolve, reject params
+        angular.module('myapp',[]).controller('MyController', function (Github) {
+            Github.search('angularjs').then(function(data) {
+                console.log(data);
+            }, function(data) {console.log('error');});
+        }).factory('Github', function ($http, $q) {
+            return {
+                search: function (term) {
+                    return $q (function (resolve, reject) {
+                        $http.get('https://api.github.com/search/repositories?q=' + term)
+                                .then(function (data) {
+                                    console.log('info from service', data);
+                                    resolve(data);
+                                },
+                        function (data) {
+                            console.log('from service');
+                            console.log(data);
+                            reject(data);
+                        });
+                    });
+
+                }
+            }
+        })
+    </script>
+</head>
+<body>
+    <div ng-controller="MyController"></div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="base.css"/>
+    <script>
+
+        // After trying out the basic promises
+        // implement code to select input files (images)
+        // and display all images AFTER all images are read.
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var globalflag = true;
+
+            console.log(document.getElementsByTagName('div'));
+
+            function get(url) {
+                return new Promise(function (resolve, reject) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', url);
+                    xhr.addEventListener('readystatechange', function(){
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200 ) {
+                                console.log('calling the resolve function ... ');
+                                globalflag = true;
+                                resolve(xhr.responseText);
+                            } else {
+                                globalflag = false;
+                                reject (xhr.statusText);
+                            }
+                        }
+                    });
+                    // not generally required
+                    xhr.addEventListener('error', function () {
+                        reject('Some other error (error description here) ... ');
+                    });
+                    xhr.send();
+                });
+            }
+
+            var pr = get('http://restcountries.eu/rest/v1/name/norway');
+            console.log(pr);
+
+            pr.then(function (response) {
+                document.body.firstElementChild.innerHTML = response;
+            }, function (error) {
+                console.log(error);
+                document.body.firstElementChild.innerHTML = JSON.stringify(error);
+            });
+            Promise.all([get('http://restcountries.eu/rest/v1/name/norway'),
+                get('http://restcountries.eu/rest/v1/name/sweden')])
+                    .then(function (result) {
+                        console.log(result);
+                        console.log('done');
+                    }, function (error) {
+                        console.log(error);
+
+                    });
+
+        });
+
+        // $.when.apply($, [array of promises])
+
+
+    </script>
+</head>
+<body>
+<div id="display">Some data here ... </div>
+<input type="file"/>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+
+        function createFileReaderPromise(fileObject) {
+            return new Promise(function (resolve, reject) {
+                var fileReader = new FileReader();
+                fileReader.addEventListener('loadend', function () {
+                    resolve(fileReader.result);
+                });
+                fileReader.addEventListener('error', function () {
+                    reject(fileReader.result);
+                });
+                fileReader.readAsDataURL(fileObject)
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var inputElement = document.querySelector('input[type="file"]');
+            inputElement.addEventListener('change', function () {
+                var fileObjects = this.files;
+                if (fileObjects.length) {
+                    var fileReaderPromises = Array.prototype.map.call(fileObjects, createFileReaderPromise);
+                    Promise.all(fileReaderPromises).then(function (data) {
+                        console.log(data);
+                    });
+                }
+            });
+        });
+
+
+
+    </script>
+
+</head>
+<body>
+<input type="file" multiple/>
+</body>
+</html>

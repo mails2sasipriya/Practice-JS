@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+
+        var p = createAjaxPromise('https://');
+        var q = delayedPromise();
+        var r = createAjaxPromise('http://uitr.herokuapp.com/countries');
+
+
+        Promise.all([p, r]).then(function (data) {
+            console.log(data);
+        });
+
+        /*p.then(function (data) {
+         console.log(data);
+         q.then(function (data) {
+         console.log('hmmm');
+         r.then(function (data) {
+         console.log(data);
+         });
+         });
+         });*/
+
+        function createAjaxPromise(url) {
+            // return a promise with the provided url
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url);
+                xhr.setRequestHeader('accept', 'application/json');
+                xhr.addEventListener('readystatechange', function () {
+                    if( xhr.readyState === 4 ) {
+                        if ( xhr.status === 200 ) {
+                            resolve(JSON.parse(xhr.responseText));
+                        } else {
+                            reject(xhr.statusText);
+                        }
+                    }
+                });
+                xhr.send();
+            });
+        }
+
+        function delayedPromise() {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    resolve();
+                }, 5000);
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

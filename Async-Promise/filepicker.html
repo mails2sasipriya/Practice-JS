@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>File Picker</title>
+    <link rel="stylesheet" href="base.css"/>
+    <script>
+        /*
+         - Asignment:
+         show a tooltip when you hover on the uploaded file.
+
+         memoization: whatever file info make hash, key, value ;
+         hash func: takes url and generate hash key, value
+         embed hash into the user selecting files, put hash in data-filehash
+         */
+        document.addEventListener('DOMContentLoaded', function () {
+            // look for all elements that have the custom-filepicker class and initiate the FilePicker for them
+            var filepickers = document.querySelectorAll('.custom-filepicker');
+            for (var i = 0, len = filepickers.length; i < len; i++) {
+                new FilePicker(filepickers[i]);
+            }
+            document.querySelector('input').addEventListener('change', function (event) {
+                var files = Array.prototype.slice.call(this.files);
+                console.log(files);
+                var div_filelist = document.querySelector('#filelist');
+                files.forEach(function (file) {
+                    var file_container = createElement('div', div_filelist, '', 'file-container panel');
+                    createElement('div', file_container, file.name, 'file-name');
+                    createElement('div', file_container, file.size, 'file-size');
+                    createElement('div', file_container, file.lastModifiedDate, 'file-date');
+                    createElement('div', file_container, file.type, 'file-type');
+                });
+            });
+        });
+
+        function createElement(type, parent, innerHTML, className) {
+            var element = document.createElement(type);
+            if (parent) parent.appendChild(element);
+            if (innerHTML) element.innerHTML = innerHTML;
+            if (className) element.className = className;
+            return element;
+        }
+
+        function FilePicker(div_element) {
+            this.btn_browse = createElement('button', div_element, 'Select File(s)', 'file-select');
+            this.btn_reset = createElement('button', div_element, 'Reset', 'file-select');
+
+            this.input_element = createElement('input', div_element, '');
+            this.input_element.setAttribute('multiple', 'multiple');
+            this.input_element.setAttribute('type', 'file');
+            this.div_filelist_element = createElement('div', div_element, '', 'filelist');
+
+            var input = this.input_element;
+            var div_files = this.div_filelist_element;
+            var self = this;
+            self.files = [];
+
+
+            this.btn_browse.addEventListener('click', function () {
+                input.click();
+            });
+
+            this.btn_reset.addEventListener('click', function () {
+                self.files = [];
+                self.showfiles();
+            });
+
+
+            input.addEventListener('change', function () {
+                var files = Array.prototype.slice.call(this.files);
+                self.files = self.files.concat(files);
+                self.showfiles();
+            });
+
+            // this is a bad practice mixing js and html, we use Angularjs to avoid this
+            FilePicker.prototype.showfiles = function() {
+                var div_files = this.div_filelist_element;
+                // create a hash table with unique id and image as value
+                var self = this;
+                div_files.innerHTML = '';
+                this.files.forEach(function(file, fileindex){
+                    console.log(file);
+                    console.log(JSON.stringify(file));
+                    var file_container = createElement('div', div_files, '', 'file-container panel');
+
+                    createElement('div', file_container, file.name, 'file-name');
+                    var image = createElement('img', file_container, "", '');
+                    image.setAttribute('src', file.mozFullPath.pathname);
+                    createElement('div', file_container, file.size, 'file-size');
+                    createElement('div', file_container, file.lastModifiedDate, 'file-date');
+                    createElement('div', file_container, file.type, 'file-type');
+                    createElement('div', file_container, '', 'remove').addEventListener('click', function(){
+                        //console.log(this.parentNode.dataset.);
+                        var index = +this.parentNode.dataset.fileid;
+                        self.files.splice(index, 1);
+                        self.showfiles();
+                    });
+
+                });
+            }
+
+        }
+
+
+
+    </script>
+</head>
+<body>
+<div class="custom-filepicker"></div>
+</body>
+</html>

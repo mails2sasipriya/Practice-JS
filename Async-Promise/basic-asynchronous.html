@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+
+        function randomPrint(i) {
+            var randomInterval = ~~(Math.random() * 1000);
+            setTimeout(function () {
+                console.log(i, randomInterval);
+            }, randomInterval);
+        }
+
+        for (var i = 0; i < 10; i++) {
+            randomPrint(i);
+        }
+
+        // Scenario 1 --> Run a callback after all the calls have been completed
+            // print the total of all the random intervals
+        // Scenario 2 --> Run the callbacks in series
+            // print the total of all random intervals - make sure the fns run in series
+        // Scenario 3 --> Run the callbacks so that the output of the previous function
+            //  serves as the input to the next function
+            // print a running total
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
